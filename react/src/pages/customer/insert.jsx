@@ -1,66 +1,85 @@
 import React, { useState } from 'react';
-import List from './List';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+
+const API_BASE_URL = "http://127.0.0.1:8000/api"; 
+
 const Insert = () => {
-const [productField, setProductField] = useState({
+    const navigate = useNavigate();
+    
+    const [customerField, setCustomerField] = useState({ 
         name: "",
         email: "",
         address: ""
     });
- 
+    
     const changeUserFieldHandler = (e) => {
-        setProductField({
-            ...productField,
+        setCustomerField({
+            ...customerField,
             [e.target.name]: e.target.value
         });
-        // console.log(userField);
- 
     }
-    const [loading,setLoading]=useState()
- 
+
     const onSubmitChange = async (e) => {
         e.preventDefault();
         try {
-            const responce= await axios.post("http://127.0.0.1:8000/api/products", productField);
-            console.log(responce)
-            setLoading(true);
+            await axios.post(`${API_BASE_URL}/customers`, customerField);
+            
+            navigate('/'); 
+            alert("Customer added successfully!");
+
         } catch (err) {
-            console.log("Something Wrong");
+            console.error("Error creating customer:", err.response ? err.response.data : err);
+            alert("Failed to add customer. Check console for details.");
         }
     }
-    if(loading){
-        return <Insert/>
-    }
- 
+    
     return (
-        <div className="container">
-                <div className='row'>
-                    <div className='col-md-4'>
-                        <h3>Add Customer</h3>
-                        <form>
-                            <div className="mb-3 mt-3">
-                                 Customer Name:
-                                <input type="text" className="form-control" id="name" placeholder="Enter Customer Full Name" name="name" onChange={e => changeUserFieldHandler(e)} />
-                            </div>
-                            <div className="mb-3 mt-3">
-                              Email:
-                                <input type="text" className="form-control" id="price" placeholder="Enter email" name="price" onChange={e => changeUserFieldHandler(e)} required/>
-                            </div>
-                            <div className="mb-3 mt-3">
-                              Address:
-                                <input type="text" className="form-control" id="password" placeholder="Enter address" name="description" onChange={e => changeUserFieldHandler(e)} required/>
-                            </div>
-                             
-                            <button type="submit" className="btn btn-primary" onClick={e => onSubmitChange(e)}>Add product</button>
-                        </form>
-                    </div>
-                    <div className='col-md-10'>
-                        <List />
-                    </div>
+        <div className="container mt-4">
+            <div className='row'>
+                <div className='col-md-6 offset-md-3'>
+                    <h3>Add Customer</h3>
+                    <form onSubmit={onSubmitChange}>
+                        <div className="mb-3">
+                            <label className="form-label">Customer Name:</label>
+                            <input 
+                                type="text" 
+                                className="form-control" 
+                                name="name" 
+                                onChange={changeUserFieldHandler}
+                                value={customerField.name}
+                                required 
+                            />
+                        </div>
+                        <div className="mb-3">
+                            <label className="form-label">Email:</label>
+                            <input 
+                                type="email" 
+                                className="form-control" 
+                                name="email" 
+                                onChange={changeUserFieldHandler} 
+                                value={customerField.email}
+                                required
+                            />
+                        </div>
+                        <div className="mb-3">
+                            <label className="form-label">Address:</label>
+                            <input 
+                                type="text" 
+                                className="form-control" 
+                                name="address" 
+                                onChange={changeUserFieldHandler} 
+                                value={customerField.address}
+                                required
+                            />
+                        </div>
+                        
+                        <button type="submit" className="btn btn-primary">Add Customer</button>
+                    </form>
                 </div>
+            </div>
         </div>
     )
 };
-
 
 export default Insert;
