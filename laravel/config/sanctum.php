@@ -4,16 +4,6 @@ use Laravel\Sanctum\Sanctum;
 
 return [
 
-    /*
-    |--------------------------------------------------------------------------
-    | Stateful Domains
-    |--------------------------------------------------------------------------
-    |
-    | Requests from the following domains / hosts will receive stateful API
-    | authentication cookies. Include your frontend SPA URL(s) here.
-    |
-    */
-
     'stateful' => explode(',', env('SANCTUM_STATEFUL_DOMAINS', sprintf(
         '%s%s%s',
         'localhost,localhost:3000,127.0.0.1,127.0.0.1:3000,127.0.0.1:8000,::1',
