@@ -1,18 +1,16 @@
 import React, { useState } from 'react';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import api from '../../axios';
 
-const API_BASE_URL = "http://127.0.0.1:8000/api"; 
 
-const Insert = () => {
+function Insert() {
     const navigate = useNavigate();
-    
-    const [customerField, setCustomerField] = useState({ 
+    const [customerField, setCustomerField] = useState({
         name: "",
         email: "",
         address: ""
     });
-    
+
     const changeUserFieldHandler = (e) => {
         setCustomerField({
             ...customerField,
@@ -23,63 +21,43 @@ const Insert = () => {
     const onSubmitChange = async (e) => {
         e.preventDefault();
         try {
-            await axios.post(`${API_BASE_URL}/customers`, customerField);
+            await api.post('/api/customers', customerField);
             
-            navigate('/'); 
             alert("Customer added successfully!");
-
+            navigate("/"); // সফল হলে লিস্ট পেজে ফিরে যাওয়া
         } catch (err) {
-            console.error("Error creating customer:", err.response ? err.response.data : err);
-            alert("Failed to add customer. Check console for details.");
+            console.error("Error adding customer:", err);
         }
     }
-    
+
+    // ব্যাক বাটনের জন্য
+    const clickToBackHandler = () => {
+        navigate("/");
+    }
+
     return (
         <div className="container mt-4">
-            <div className='row'>
-                <div className='col-md-6 offset-md-3'>
-                    <h3>Add Customer</h3>
-                    <form onSubmit={onSubmitChange}>
-                        <div className="mb-3">
-                            <label className="form-label">Customer Name:</label>
-                            <input 
-                                type="text" 
-                                className="form-control" 
-                                name="name" 
-                                onChange={changeUserFieldHandler}
-                                value={customerField.name}
-                                required 
-                            />
-                        </div>
-                        <div className="mb-3">
-                            <label className="form-label">Email:</label>
-                            <input 
-                                type="email" 
-                                className="form-control" 
-                                name="email" 
-                                onChange={changeUserFieldHandler} 
-                                value={customerField.email}
-                                required
-                            />
-                        </div>
-                        <div className="mb-3">
-                            <label className="form-label">Address:</label>
-                            <input 
-                                type="text" 
-                                className="form-control" 
-                                name="address" 
-                                onChange={changeUserFieldHandler} 
-                                value={customerField.address}
-                                required
-                            />
-                        </div>
-                        
-                        <button type="submit" className="btn btn-primary">Add Customer</button>
-                    </form>
-                </div>
+            <div className='col-md-6 offset-md-3'>
+                <h1>Add New Customer</h1>
+                <form onSubmit={onSubmitChange}>
+                    <div className="mb-3">
+                        <label className="form-label">Name:</label>
+                        <input type="text" className="form-control" name="name" onChange={changeUserFieldHandler} required />
+                    </div>
+                    <div className="mb-3">
+                        <label className="form-label">Email:</label>
+                        <input type="email" className="form-control" name="email" onChange={changeUserFieldHandler} required />
+                    </div>
+                    <div className="mb-3">
+                        <label className="form-label">Address:</label>
+                        <input type="text" className="form-control" name="address" onChange={changeUserFieldHandler} required />
+                    </div>
+                    <button type="submit" className="btn btn-primary me-2">Add Customer</button>
+                    <button type="button" className='btn btn-secondary' onClick={clickToBackHandler}>Back To List</button>
+                </form>
             </div>
         </div>
     )
-};
+}
 
 export default Insert;
